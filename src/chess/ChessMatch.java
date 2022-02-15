@@ -353,26 +353,45 @@ public class ChessMatch {
 			}
 
 			if (Math.abs(firstPlacement - secPlacement) >= 2) {
-				// System.out.println("the difference was >= 2");
-				placeNewPiece(firstPlacement, 1, new Rook(board, Color.WHITE));
-				placeNewPiece(firstPlacement, 8, new Rook(board, Color.BLACK));
-				placeNewPiece(secPlacement, 1, new Rook(board, Color.WHITE));
-				placeNewPiece(secPlacement, 8, new Rook(board, Color.BLACK));
-				int firstIndex = template.indexOf(firstPlacement);
-				int secIndex = template.indexOf(secPlacement);
-				int maxBound = Math.max(firstIndex, secIndex);
-				int minBound = Math.min(firstIndex, secIndex);
-				int kingIndex = rand.nextInt((maxBound - 1) - (minBound + 1)) + (minBound + 1);
-				char kingPlacement = template.get(kingIndex);
-				// System.out.println("kings index was chosen: " + kingIndex);
-				placeNewPiece(kingPlacement, 1, new King(board, Color.WHITE, this));
-				placeNewPiece(kingPlacement, 8, new King(board, Color.BLACK, this));
-				placed = true;
+                // System.out.println("the difference was >= 2");
+                placeNewPiece(firstPlacement, 1, new Rook(board, Color.WHITE));
+                placeNewPiece(firstPlacement, 8, new Rook(board, Color.BLACK));
+                placeNewPiece(secPlacement, 1, new Rook(board, Color.WHITE));
+                placeNewPiece(secPlacement, 8, new Rook(board, Color.BLACK));
 
-				usedChars.add(firstPlacement);
-				usedChars.add(secPlacement);
-				usedChars.add(kingPlacement);
-			}
+                if (Math.abs(firstPlacement - secPlacement) == 2) {
+                    
+                    int firstIndex = template.indexOf(firstPlacement);
+                    int secIndex = template.indexOf(secPlacement);
+                    int maxBound = Math.max(firstIndex, secIndex);
+
+                    char kingPlacement = template.get(maxBound - 1);
+
+                    placeNewPiece(kingPlacement, 1, new King(board, Color.WHITE, this));
+                    placeNewPiece(kingPlacement, 8, new King(board, Color.BLACK, this));
+                    placed = true;
+
+                    usedChars.add(firstPlacement);
+                    usedChars.add(secPlacement);
+                    usedChars.add(kingPlacement);
+                } else {
+                    int firstIndex = template.indexOf(firstPlacement);
+                    int secIndex = template.indexOf(secPlacement);
+                    int maxBound = Math.max(firstIndex, secIndex);
+                    int minBound = Math.min(firstIndex, secIndex);
+                    int kingIndex = rand.nextInt((maxBound - 1) - (minBound + 1)) + (minBound + 1);
+                    char kingPlacement = template.get(kingIndex);
+
+                    // System.out.println("kings index was chosen: " + kingIndex);
+                    placeNewPiece(kingPlacement, 1, new King(board, Color.WHITE, this));
+                    placeNewPiece(kingPlacement, 8, new King(board, Color.BLACK, this));
+                    placed = true;
+
+                    usedChars.add(firstPlacement);
+                    usedChars.add(secPlacement);
+                    usedChars.add(kingPlacement);
+                }
+            }
 			//  else {
 			// 	// System.out.println("the difference was <= 2");
 			// }
