@@ -17,6 +17,11 @@ public class Program {
 		Scanner sc = new Scanner(System.in);
 		ChessMatch chessMatch = new ChessMatch();
 		List<ChessPiece> captured = new ArrayList<>();
+		
+		System.out.println("Would you like to play Chess960? (Y or N)");
+		if (sc.nextLine().equals("Y") || sc.nextLine().equals("N") || sc.nextLine().equals("y") || sc.nextLine().equals("n")) {
+			chessMatch = new ChessMatch(true);
+		}
 
 		while (! chessMatch.getCheckMate()) {
 			try {

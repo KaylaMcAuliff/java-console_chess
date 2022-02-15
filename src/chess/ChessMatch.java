@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import boardgame.Board;
@@ -32,6 +33,15 @@ public class ChessMatch {
 		turn = 1;
 		currentPlayer = Color.WHITE;
 		initialSetup();
+	}
+
+	public ChessMatch(boolean is960Game) {
+		board = new Board(8, 8);
+		turn = 1;
+		currentPlayer = Color.WHITE;
+		if (is960Game) {
+			FischerSetup();
+		}
 	}
 	
 	public int getTurn() {
@@ -315,6 +325,142 @@ public class ChessMatch {
 		piecesOnTheBoard.add(piece);
 	}
 	
+	private void FischerSetup() {
+		List<Character> template = new ArrayList<>();
+        template.add('a'); 
+        template.add('b'); 
+        template.add('c'); 
+        template.add('d'); 
+        template.add('e'); 
+        template.add('f'); 
+        template.add('g'); 
+        template.add('h');
+
+		List<Character> usedChars = new ArrayList<>();
+
+		boolean placed = false;
+		while (!placed) {
+			Random rand = new Random();
+			int i = rand.nextInt(template.size());
+			char firstPlacement = template.get(i);
+			// System.out.println("first rook index chosen is: " + i + " column is: " + firstPlacement);
+
+			char secPlacement = firstPlacement;
+			while (secPlacement == firstPlacement) {
+				i = rand.nextInt(template.size());
+				secPlacement = template.get(i);
+				// System.out.println("second rook index chosen is: " + i + " column is: " + secPlacement);
+			}
+
+			if (Math.abs(firstPlacement - secPlacement) >= 2) {
+				// System.out.println("the difference was >= 2");
+				placeNewPiece(firstPlacement, 1, new Rook(board, Color.WHITE));
+				placeNewPiece(firstPlacement, 8, new Rook(board, Color.BLACK));
+				placeNewPiece(secPlacement, 1, new Rook(board, Color.WHITE));
+				placeNewPiece(secPlacement, 8, new Rook(board, Color.BLACK));
+				int firstIndex = template.indexOf(firstPlacement);
+				int secIndex = template.indexOf(secPlacement);
+				int maxBound = Math.max(firstIndex, secIndex);
+				int minBound = Math.min(firstIndex, secIndex);
+				int kingIndex = rand.nextInt((maxBound - 1) - (minBound + 1)) + (minBound + 1);
+				char kingPlacement = template.get(kingIndex);
+				// System.out.println("kings index was chosen: " + kingIndex);
+				placeNewPiece(kingPlacement, 1, new King(board, Color.WHITE, this));
+				placeNewPiece(kingPlacement, 8, new King(board, Color.BLACK, this));
+				placed = true;
+
+				usedChars.add(firstPlacement);
+				usedChars.add(secPlacement);
+				usedChars.add(kingPlacement);
+			}
+			//  else {
+			// 	// System.out.println("the difference was <= 2");
+			// }
+		}
+
+		placed = false;
+		while (!placed) {
+			Random rand = new Random();
+			int i = rand.nextInt(template.size());
+			char firstPlacement = template.get(i);
+			// System.out.println("first bishop index chosen is: " + i + " column is: " + firstPlacement);
+
+			char secPlacement = firstPlacement;
+			while (secPlacement == firstPlacement) {
+				i = rand.nextInt(template.size());
+				secPlacement = template.get(i);
+				// System.out.println("second bishop index chosen is: " + i + " column is: " + secPlacement);
+			}
+
+			if (Math.abs(firstPlacement - secPlacement) % 2 == 1 && !usedChars.contains(firstPlacement) && !usedChars.contains(secPlacement)) {
+				placeNewPiece(firstPlacement, 1, new Bishop(board, Color.WHITE));
+				placeNewPiece(secPlacement, 1, new Bishop(board, Color.WHITE));
+				placeNewPiece(firstPlacement, 8, new Bishop(board, Color.BLACK));
+				placeNewPiece(secPlacement, 8, new Bishop(board, Color.BLACK));
+
+				usedChars.add(firstPlacement);
+				usedChars.add(secPlacement);
+				placed = true;
+			}
+
+		}
+
+		for (int i = 0; i < 2; i++) {
+			placed = false;
+			while(!placed) {
+				Random rand = new Random();
+				int x = rand.nextInt(template.size());
+				char placement = template.get(x);
+				// System.out.println("knight index chosen is: " + x + " column is: " + placement);
+
+				if (!usedChars.contains(placement)) {
+					placeNewPiece(placement, 1, new Knight(board, Color.WHITE));
+					placeNewPiece(placement, 8, new Knight(board, Color.BLACK));
+					usedChars.add(placement);
+					placed = true;
+				}
+			}
+		}
+
+		placed = false;
+		while (!placed) {
+			Random rand = new Random();
+			int x = rand.nextInt(template.size());
+			char placement = template.get(x);
+			// System.out.println("queen index chosen is: " + x + " column is: " + placement);
+
+			if (!usedChars.contains(placement)) {
+				placeNewPiece(placement, 1, new Queen(board, Color.WHITE));
+				placeNewPiece(placement, 8, new Queen(board, Color.BLACK));
+				usedChars.add(placement);
+				placed = true;
+			}
+		}
+
+		placeNewPiece('a', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('b', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('c', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('d', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('e', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('f', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('g', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('h', 2, new Pawn(board, Color.WHITE, this));
+
+		placeNewPiece('a', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('b', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('c', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('d', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('e', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('f', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('h', 7, new Pawn(board, Color.BLACK, this));
+
+		// System.out.println("used chars: ");
+		// for (Character character : usedChars) {
+		// 	System.out.println(character);
+		// }
+	}
+
 	private void initialSetup() {
         placeNewPiece('a', 1, new Rook(board, Color.WHITE));
         placeNewPiece('b', 1, new Knight(board, Color.WHITE));
